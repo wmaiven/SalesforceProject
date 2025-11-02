@@ -43,3 +43,6 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+ 
+# Documentação local (não versionar)
+docs/README-local.md
