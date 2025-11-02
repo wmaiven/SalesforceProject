@@ -3,13 +3,15 @@
 
 function Try-Push {
   try {
-    $remotes = git remote
+    $remotes = git remote | Where-Object { $_ -ne '' }
     if ($remotes) {
       $branch = git rev-parse --abbrev-ref HEAD
       $upstream = git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>$null
       if (-not $upstream) {
-        # Primeiro push: define upstream para origin/<branch>
-        git push -u origin $branch
+        # Primeiro push: usa o primeiro remoto disponível caso não exista upstream
+        $remote = (git remote | Select-Object -First 1)
+        Write-Host "[auto-commit] Definindo upstream em $remote/$branch"
+        git push -u $remote $branch
       } else {
         git push
       }
