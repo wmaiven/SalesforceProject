@@ -1,5 +1,5 @@
 # Script de auto-commit a cada 10 minutos
-# Cria commit mesmo sem alterações (allow-empty) para garantir periodicidade
+# Realiza commits por arquivo modificado, seguindo Conventional Commits
 
 function Try-Push {
   try {
@@ -23,18 +23,64 @@ function Try-Push {
   }
 }
 
+function Get-ChangedEntries {
+  $lines = git status --porcelain
+  $entries = @()
+  foreach ($line in $lines) {
+    if ($line -match '^(..)[ ](.+)$') {
+      $status = $matches[1].Trim()
+      $path = $matches[2].Trim()
+      $entries += @{ status = $status; path = $path }
+    }
+  }
+  return $entries
+}
+
+function Select-Scope($path) {
+  if ($path -match 'force-app/main/default/lwc/') { return 'lwc' }
+  elseif ($path -match 'force-app/main/default/classes/') { return 'apex' }
+  elseif ($path -match 'force-app/main/default/objects/') { return 'objects' }
+  elseif ($path -match '^scripts/') { return 'scripts' }
+  elseif ($path -match '^config/') { return 'config' }
+  else { return 'repo' }
+}
+
+function Commit-Entry($entry) {
+  $path = $entry.path
+  $status = $entry.status
+  git add -- "$path"
+  $scope = Select-Scope $path
+  $name = [System.IO.Path]::GetFileName($path)
+  $type = 'chore'
+  $desc = "update $name"
+  if ($status -match '^\?\?') { $type = 'feat'; $desc = "add $name" }
+  elseif ($status -match '^A') { $type = 'feat'; $desc = "add $name" }
+  elseif ($status -match '^M') { $type = 'chore'; $desc = "update $name" }
+  elseif ($status -match '^D') { $type = 'chore'; $desc = "remove $name" }
+  elseif ($status -match '^R') { $type = 'refactor'; $desc = "rename $name" }
+  $msg = "$type($scope): $desc"
+  git commit -m $msg
+}
+
+function Process-Changes {
+  $entries = Get-ChangedEntries
+  if (-not $entries -or $entries.Count -eq 0) {
+    Write-Host '[auto-commit] Sem alterações; aguardando próximo ciclo.'
+    return
+  }
+  foreach ($e in $entries) {
+    try {
+      Commit-Entry $e
+      Try-Push
+    } catch {
+      Write-Host "[auto-commit] Falha ao commitar '$($e.path)': $($_.Exception.Message)"
+    }
+  }
+}
+
 function Invoke-AutoCommit {
   while ($true) {
-    $status = git status --porcelain
-    git add -A
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
-    $message = "chore(auto-commit): snapshot $timestamp"
-    if ($status) {
-      git commit -m $message
-    } else {
-      git commit --allow-empty -m $message
-    }
-    Try-Push
+    Process-Changes
     Start-Sleep -Seconds 600 # 10 minutos
   }
 }
