@@ -1,16 +1,18 @@
-# Script de auto-commit a cada 20 minutos
-# Executa commits apenas se houver alterações pendentes
+# Script de auto-commit a cada 10 minutos
+# Cria commit mesmo sem alterações (allow-empty) para garantir periodicidade
 
 function Invoke-AutoCommit {
   while ($true) {
     $status = git status --porcelain
+    git add -A
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
+    $message = "chore(auto-commit): snapshot $timestamp"
     if ($status) {
-      git add -A
-      $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
-      $message = "chore(auto-commit): snapshot $timestamp"
       git commit -m $message
+    } else {
+      git commit --allow-empty -m $message
     }
-    Start-Sleep -Seconds 1200 # 20 minutos
+    Start-Sleep -Seconds 600 # 10 minutos
   }
 }
 
