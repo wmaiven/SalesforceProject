@@ -1,0 +1,173 @@
+/* Estilos para o componente de busca de enderecos */
+
+/* Status do servico */
+.service-status {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.service-status.online {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.service-status.offline {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-text {
+    margin-left: 0.25rem;
+}
+
+/* Grupo de botoes */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .button-group lightning-button {
+        width: 100%;
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Input de CEP */
+.cep-input {
+    width: 100%;
+}
+
+/* Card de resultado */
+.result-card {
+    margin-top: 1rem;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    background-color: #ffffff;
+}
+
+.result-card.success {
+    border-color: #4bca81;
+    box-shadow: 0 2px 4px rgba(75, 202, 129, 0.1);
+}
+
+/* Campos de endereco */
+.address-field {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border-left: 3px solid #0176d3;
+}
+
+.address-field strong {
+    display: block;
+    color: #3e3e3c;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025rem;
+    margin-bottom: 0.25rem;
+}
+
+.field-value {
+    color: #181818;
+    font-size: 0.875rem;
+    font-weight: 400;
+    word-break: break-word;
+}
+
+.formatted-address {
+    border-left-color: #e74c3c;
+}
+
+.formatted-text {
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.field-value:empty::after {
+    content: "Nao informado";
+    color: #706e6b;
+    font-style: italic;
+}
+
+/* Indicador visual para campos obrigatorios */
+.required-field {
+    border-left-color: #e74c3c;
+}
+
+/* Card de instrucoes */
+.instructions-card {
+    background-color: #f4f6f9;
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+}
+
+.instructions-card h3 {
+    color: #0176d3;
+    margin-bottom: 0.75rem;
+}
+
+.instructions-card ul {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.instructions-card li {
+    margin-bottom: 0.5rem;
+    color: #3e3e3c;
+    line-height: 1.4;
+}
+
+.instructions-card li:last-child {
+    margin-bottom: 0;
+}
+
+.instructions-card strong {
+    color: #0176d3;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .address-field {
+        margin-bottom: 0.5rem;
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .instructions-card {
+        padding: 0.75rem;
+    }
+}
+
+/* Animacoes de loading */
+.loading-overlay {
+    position: relative;
+}
+
+.loading-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
